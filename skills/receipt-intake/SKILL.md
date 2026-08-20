@@ -16,6 +16,12 @@ Someone photographed a receipt on their phone. Turn it into a correct,
 documented entry — quickly, because they are probably still standing in the
 parking lot.
 
+## Before anything: confirm whose books you are in
+
+Read `composio_account` from `brain/config.md` and pass `--account <word_id>` on
+every call. Missing or empty → stop and run `onboarding`. Never fall back to the
+default account; with two companies connected it can be the wrong one.
+
 ## Step 1 — Read it
 
 Extract, and be explicit about what you could not read:
@@ -42,7 +48,8 @@ book a receipt you cannot read.
 through the bank feed. Search for the same amount within a few days:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" -d '{"query":"SELECT * FROM Purchase WHERE TotalAmt = '\''340.18'\'' AND TxnDate >= '\''2026-08-15'\''"}'
+composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <word_id> \
+  -d '{"query":"SELECT * FROM Purchase WHERE TotalAmt = '\''340.18'\'' AND TxnDate >= '\''2026-08-15'\''"}'
 ```
 
 - **Match found** → attach the receipt to it and correct the category if needed.
@@ -70,7 +77,7 @@ This is the part that makes the receipt worth keeping.
 
 **QuickBooks** — create an `Attachable` and link it to the transaction:
 ```bash
-composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" -d '{...}'
+composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" --account <word_id> -d '{...}'
 ```
 The `AttachableRef` must point at the transaction's type and ID. An attachment
 uploaded but not linked is invisible in the UI and effectively lost — verify the

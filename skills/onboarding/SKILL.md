@@ -18,7 +18,10 @@ how she learns one, and how she arrives already knowing most of the answers.
 **Output is a set of files in `brain/`.** If you finish and
 `brain/chart-of-accounts.md` does not exist, onboarding did not happen.
 
-## Step 1 — Connect the accounting system
+## Step 1 — Connect the accounting system, and pin the exact account
+
+**This step decides whose books you touch. Get it wrong and you post a client's
+expenses into your owner's ledger.**
 
 Ask which they use: **QuickBooks Online** or **Xero**.
 
@@ -31,18 +34,49 @@ composio link quickbooks     # or: composio link xero
 means creating a developer app at Intuit or Xero, which takes real effort.
 Composio is genuinely easier and you should say so.
 
-Verify the connection before continuing — read the company name back to them:
+### Pin the account — never rely on the default
+
+Many owners have **more than one** company connected to the same Composio
+account — their own business and a client's, or an old file and a current one.
+When more than one exists, an unpinned call picks one for you, and which one it
+picks is not something you may rely on.
+
+List what is actually connected:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" -d '{"query":"SELECT * FROM CompanyInfo"}'
+composio connections list --toolkit quickbooks
 ```
 
-If it fails, stop and fix it. Everything downstream depends on this.
+If more than one comes back, **show the owner the list and make them choose.**
+Never guess, never pick the first, never assume the alias that matches their
+company name is the right one.
+
+Then verify the choice by reading the company name back from the books
+themselves — the alias is a label someone typed, the `CompanyName` is the truth:
+
+```bash
+composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <word_id> \
+  -d '{"query":"SELECT * FROM CompanyInfo"}'
+```
+
+Say it out loud: *"I'm working in **Vindex Consulting, LLC**. Correct?"* Get a
+yes before you read anything else.
+
+Record it in `brain/config.md` as `composio_account`. **Every** later call —
+every query, every posting, every receipt attachment — passes
+`--account <word_id>`. A call without it is a bug, not a shortcut.
+
+If the connection fails or the company name is not what the owner expected,
+stop. Everything downstream depends on this being right.
+
+**Completion criterion:** the owner has confirmed the company name you read back
+from the books, and `composio_account` is written into `brain/config.md`.
 
 ## Step 2 — Read the chart of accounts
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ACCOUNT" -d '{"query":"SELECT * FROM Account MAXRESULTS 500"}'
+composio execute "QUICKBOOKS_QUERY_ACCOUNT" --account <word_id> \
+  -d '{"query":"SELECT * FROM Account MAXRESULTS 500"}'
 ```
 Xero: `XERO_LIST_ACCOUNTS`.
 
@@ -98,7 +132,7 @@ This is the step that makes Penny useful on day one instead of week three.
 
 Pull the last 12 months of transactions:
 ```bash
-composio execute "QUICKBOOKS_GET_TRANSACTION_LIST_REPORT" -d '{...}'
+composio execute "QUICKBOOKS_GET_TRANSACTION_LIST_REPORT" --account <word_id> -d '{...}'
 ```
 
 Group by vendor. For each vendor, find where its transactions were actually
@@ -162,6 +196,8 @@ Write **`brain/config.md`**:
 
 ```yaml
 accounting_system: quickbooks   # quickbooks | xero
+composio_account: ""           # REQUIRED: word_id of the pinned account
+company_name: ""               # verified from CompanyInfo, not the alias
 autonomy: approve               # approve | auto
 confidence_threshold: high      # min confidence to auto-post when autonomy: auto
 bank_feed_mode: catch_all_rule  # catch_all_rule | manual_accept | xero_direct

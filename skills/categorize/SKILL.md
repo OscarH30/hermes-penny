@@ -15,12 +15,22 @@ metadata:
 Find what is uncategorized, decide what you actually know, and be honest about
 the rest.
 
+## Before anything: confirm whose books you are in
+
+Read `composio_account` from `brain/config.md` and pass `--account <word_id>` on
+**every** call in this skill. If it is missing or empty, **stop** and run
+`onboarding` — do not fall back to the default account. Owners commonly have a
+second company connected, and an unpinned call can land in the wrong ledger.
+Posting a client's expenses into your owner's books is the single worst mistake
+available to you, and it is silent when it happens.
+
 ## Step 1 — Find the work
 
 **QuickBooks.** Query transactions posted to the catch-all accounts:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" -d '{"query":"SELECT * FROM Purchase WHERE TxnDate >= '\''2026-08-01'\'' MAXRESULTS 200"}'
+composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <word_id> \
+  -d '{"query":"SELECT * FROM Purchase WHERE TxnDate >= '\''2026-08-01'\'' MAXRESULTS 200"}'
 ```
 
 Then filter to lines whose `AccountBasedExpenseLineDetail.AccountRef` points at
@@ -94,7 +104,7 @@ reason is a guess wearing a suit.
 **QuickBooks.** Update the transaction's line to the correct `AccountRef`:
 
 ```bash
-composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" -d '{...}'
+composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" --account <word_id> -d '{...}'
 ```
 
 QuickBooks updates are **full-object updates** — read the current object, change
