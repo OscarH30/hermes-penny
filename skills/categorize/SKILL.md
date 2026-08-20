@@ -21,7 +21,10 @@ Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
 and substitute the `word_id` recorded there.
 
 If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
-and run `onboarding`.** Never substitute a default and never guess. An unpinned
+and run `onboarding`.** Never substitute a default and never guess.
+
+A binding without an `owner_said` quote is **not** a valid binding — treat it as
+absent. It means something wrote the file without a human confirming it. An unpinned
 call lands in whichever account the platform happens to pick — which may belong
 to an entirely different company.
 

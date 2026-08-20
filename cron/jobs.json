@@ -3,7 +3,7 @@
     {
       "id": "f817db5f9380",
       "name": "Transaction sweep",
-      "prompt": "Sweep the books for uncategorized transactions using the categorize skill.\n\nFind anything sitting in Uncategorized Expense, Uncategorized Income, Uncategorized Asset, or Ask My Accountant. Match each against brain/rules.md and assign an honest confidence. Always drop to 'ask' for general merchants, anything over large_txn_threshold, anything that looks personal, and anything that might be a fixed asset rather than an expense.\n\nPropose - do not post - unless autonomy is set to auto in brain/config.md. Show the rule behind every proposal.\n\nIf nothing is uncategorized, say exactly that and stop. If bank_feed_mode is manual_accept, note that an empty queue may just mean nothing has been accepted into the books yet - do not report 'all clear' when you cannot actually see the For Review tab.\n\nIf brain/chart-of-accounts.md does not exist, report that onboarding has not been run and stop.",
+      "prompt": "Sweep the books for uncategorized transactions using the categorize skill.\n\nFind anything sitting in Uncategorized Expense, Uncategorized Income, Uncategorized Asset, or Ask My Accountant. Match each against brain/rules.md and assign an honest confidence. Always drop to 'ask' for general merchants, anything over large_txn_threshold, anything that looks personal, and anything that might be a fixed asset rather than an expense.\n\nPropose - do not post - unless autonomy is set to auto in brain/config.md. Show the rule behind every proposal.\n\nIf nothing is uncategorized, say exactly that and stop. If bank_feed_mode is manual_accept, note that an empty queue may just mean nothing has been accepted into the books yet - do not report 'all clear' when you cannot actually see the For Review tab.\n\nIf brain/chart-of-accounts.md does not exist, report that onboarding has not been run and stop. Do NOT onboard or choose an account \u2014 this is a scheduled run with no human to confirm anything.",
       "schedule": {
         "kind": "interval",
         "minutes": 180,
@@ -31,7 +31,7 @@
     {
       "id": "2bb87d3d1e45",
       "name": "Daily close",
-      "prompt": "Run the end-of-day summary using the daily-close skill.\n\nLead with anything that needs the owner - batch every open question into this one message. Then today's transaction count and totals, what you categorized and posted, any genuine anomaly, and what is still open.\n\nVerify every number against the books. Do not estimate.\n\nIf nothing came through and nothing needs them, say that in two lines and stop. Never pad the report.",
+      "prompt": "Run the end-of-day summary using the daily-close skill.\n\nLead with anything that needs the owner - batch every open question into this one message. Then today's transaction count and totals, what you categorized and posted, any genuine anomaly, and what is still open.\n\nVerify every number against the books. Do not estimate.\n\nIf nothing came through and nothing needs them, say that in two lines and stop. Never pad the report.\n\nIf brain/accounts.md is missing or has no owner_said confirmation, report that onboarding has not been run and stop. Do NOT onboard, do NOT choose an account, and do NOT write any binding \u2014 this is a scheduled run with no human to confirm anything.",
       "schedule": {
         "kind": "cron",
         "expr": "30 17 * * 1-5",
