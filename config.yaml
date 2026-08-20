@@ -1,0 +1,20 @@
+# ─────────────────────────────────────────────────────────────────────
+# Model
+#
+# Defaults to Nous Portal, which is what `hermes setup --portal` gives you
+# and the smoothest path for unattended cron jobs (OAuth refreshes itself).
+#
+# On a different provider? One command, no file editing:
+#     hermes -p <agent> model
+#
+# Or edit the two lines below (e.g. provider: anthropic,
+# default: claude-sonnet-4). Your change survives `hermes profile update`.
+# ─────────────────────────────────────────────────────────────────────
+model:
+  default: z-ai/glm-5.2
+  provider: nous
+  base_url: ''
+
+agent:
+  max_turns: 500
+  reasoning_effort: medium

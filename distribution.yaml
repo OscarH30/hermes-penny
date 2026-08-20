@@ -1,0 +1,39 @@
+name: penny
+version: 1.0.0
+description: "Bookkeeper — learns your chart of accounts, categorizes uncategorized transactions in QuickBooks or Xero, books receipts from a photo, and asks about anything it isn't sure of. Nothing posts without your approval."
+hermes_requires: ">=0.20.0"
+author: "Vindex Consulting"
+license: "MIT"
+
+# Penny reaches your accounting system through Composio (recommended) or
+# direct API credentials. Everything below is optional — her onboarding skill
+# detects what you actually connected and configures around it.
+env_requires:
+  - name: COMPOSIO_API_KEY
+    description: "Composio API key — the recommended path for QuickBooks and Xero. Free at composio.dev, then run `composio link quickbooks`."
+    required: false
+    default: ""
+  - name: QBO_CLIENT_ID
+    description: "QuickBooks Online app client ID — only if you are NOT using Composio. Requires creating an Intuit developer app."
+    required: false
+    default: ""
+  - name: QBO_CLIENT_SECRET
+    description: "QuickBooks Online app client secret — pairs with QBO_CLIENT_ID."
+    required: false
+    default: ""
+  - name: QBO_REALM_ID
+    description: "Your QuickBooks company (realm) ID."
+    required: false
+    default: ""
+  - name: XERO_CLIENT_ID
+    description: "Xero app client ID — only if you use Xero and are NOT using Composio."
+    required: false
+    default: ""
+  - name: XERO_CLIENT_SECRET
+    description: "Xero app client secret — pairs with XERO_CLIENT_ID."
+    required: false
+    default: ""
+  - name: PENNY_RECEIPT_EMAIL
+    description: "Optional inbox Penny watches for forwarded receipts (e.g. receipts@yourdomain.com). Telegram photos work without this."
+    required: false
+    default: ""
