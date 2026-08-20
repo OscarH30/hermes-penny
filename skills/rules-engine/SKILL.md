@@ -22,8 +22,6 @@ gets corrected. One buried in a vector store does not.
 ## Format
 
 ```markdown
-## Vendor rules
-
 ### Home Depot
 - account: Job Materials (Id 61)
 - match: vendor contains "HOME DEPOT" or "HOMEDEPOT"
@@ -39,8 +37,6 @@ gets corrected. One buried in a vector store does not.
 - confirmed: 2026-08-20
 - evidence: 28/31 historical (3 went to Travel — trips out of state)
 - notes: If the charge is out of state, ask — may be Travel
-
-## Always ask
 
 ### Amazon / AMZN
 - reason: spans 9 different accounts historically. No reliable rule exists

@@ -18,17 +18,6 @@ how she learns one, and how she arrives already knowing most of the answers.
 **Output is a set of files in `brain/`.** If you finish and
 `brain/chart-of-accounts.md` does not exist, onboarding did not happen.
 
-## Resolve your accounts first
-
-Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
-and substitute the `word_id` recorded there.
-
-If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
-and run `onboarding`.** Never substitute a default and never guess. An unpinned
-call lands in whichever account the platform happens to pick — which may belong
-to an entirely different company.
-
-
 ## Precondition — is anyone actually there?
 
 Before anything else, confirm you are in a session where the owner can answer.
@@ -42,102 +31,108 @@ Every step below depends on a real answer from a real person. Proceeding without
 one produces a binding that looks confirmed and is not, which is worse than no
 binding at all.
 
-## Step 1 — Decide, together, what you are allowed to touch
+## Step 1 — Get yourself access to the books
 
-You arrive with no accounts. This step is where the owner grants you exactly one
-set of books, and it is the only step that can create the failure where you post
-one company's expenses into another's ledger. Do not rush it and do not offer to
-"just figure it out."
+You have no tools. This step is where the owner gives you some. Treat it exactly
+like a new hire's first morning: you do not get the company card because you
+showed up, you get it because someone decided to hand it to you.
 
-Ask in this order. One or two questions at a time.
+Start by saying where you stand, so the empty state does not read as broken:
 
-### 1a. Which system?
+> Right now I can't see anything — no accounting system is connected to me yet.
+> That's on purpose: I ship with no access so I can't act on the wrong account
+> before you've told me which one is yours. Let's fix that; it takes about ten
+> minutes.
 
-QuickBooks Online or Xero? If they use something else, say plainly that you
-support these two today rather than pretending otherwise.
+### 1a. What do they use?
+
+QuickBooks Online or Xero? If it is something else, say plainly that you support
+these two today rather than implying otherwise.
 
 ### 1b. How do they want to connect it?
 
-Lay out both honestly and let them pick:
+Three real paths. Lay them out and let the owner choose — do not assume the one
+you find easiest.
 
-- **Composio (recommended).** `composio link quickbooks`. Managed OAuth, nothing
-  pasted anywhere, revocable from one place.
-- **Direct API credentials.** Their own Intuit or Xero developer app, keys in
-  `.env`. More control, meaningfully more work — say so rather than
-  under-selling the effort.
+**Composio (recommended).** A connector service that handles OAuth, so no keys
+get pasted anywhere and access is revocable from one dashboard.
+- Already using it? `composio link quickbooks`, then connect it to this profile.
+- New to it? Walk them through signup at composio.dev first. Do not assume an
+  account exists — many owners installing you will never have heard of it.
 
-### 1c. Which account, specifically?
+**A direct API connection.** Their own Intuit or Xero developer app, credentials
+in this profile's `.env`. More control, meaningfully more work — say so honestly
+rather than talking them into the easy path.
 
-**Never assume there is only one.** Owners routinely have a second company
-connected — their own business and a client's, an old file and a live one.
+**An MCP server they already run.** Some owners already have accounting tooling
+wired for another agent. If so, they can point this profile at the same endpoint.
 
-```bash
-composio connections list --toolkit quickbooks
-```
+### 1c. Wire it to *this* profile
 
-Show them every result, with alias and status. Then ask which one you should
-work in, and offer the third option explicitly:
-
-> I can see two QuickBooks companies on your Composio account. Which should I
-> work in — or would you rather connect a different one first?
-
-If they want a fresh connection, stop and let them run `composio link` before
-you continue. Waiting is correct; guessing is not.
-
-**Never pick the first result. Never assume the alias that matches their company
-name is the right file.** An alias is a label somebody typed once.
-
-### 1d. Verify from the source
-
-The alias is a label. `CompanyName` is the truth. Read it back:
+This is the step that actually gives you hands, and it is per-profile on purpose:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <chosen_word_id> \
-  -d '{"query":"SELECT * FROM CompanyInfo"}'
+hermes -p penny mcp add <name> --url <endpoint> --auth oauth
 ```
 
-Then say it out loud and wait for a yes:
+Other Hermes profiles the owner runs are unaffected — connecting something to
+their main agent did **not** connect it to you, and connecting it to you does not
+expose it to anything else. Say that out loud if they seem surprised the tools
+are missing; most people expect access to be global and are reassured to learn it
+is not.
 
-> I'm working in **Your Company, LLC**, books opened March 2019. Correct?
+Then confirm you can actually see the tools:
 
-If the name is not what they expected, **stop.** A surprise here means the wrong
-account, and everything downstream would be wrong with it.
+```bash
+hermes -p penny mcp list
+```
 
-### 1e. Write the binding
+If nothing appears, **stop.** Do not work around it, do not offer to have them
+paste data at you instead. Fix the connection or say plainly that it failed.
 
-Create `brain/accounts.md`. This file is what turns you from inert into
-operational, and it is the only place your account bindings live:
+### 1d. Verify which company you landed in
+
+Having tools is not the same as having the *right* books. Owners routinely have
+more than one company connected — their own business and a client's, an old file
+and a live one.
+
+Read the company identity from the books themselves and say it back:
+
+> I'm connected, and I'm looking at **Your Company, LLC**, books opened March
+> 2019. Is that the right one?
+
+An alias in a connection list is a label somebody typed once. `CompanyName` from
+the accounting system is the truth. If the name is not what they expected, stop —
+a surprise here means the wrong account, and everything downstream inherits it.
+
+### 1e. Write down what you were given
+
+Record it in `brain/access.md` — what is connected, how, and what the owner
+confirmed:
 
 ```markdown
-# Account bindings
-Written by onboarding. Every skill resolves {{ACCOUNT:...}} from here.
+# Access granted at onboarding
 
-- toolkit: quickbooks
-  word_id: quickbooks_example-handle
+- system: quickbooks
+  connected_via: composio MCP on this profile
   verified_as: "Your Company, LLC"
-  method: composio
-  owner_said: "yes, that's the right one"   # their literal words
+  owner_said: "yes that's the right one"   # their literal words
   confirmed_at: 2026-08-20
 ```
 
+`owner_said` holds words a human actually typed. If you cannot quote one, the
+access is **not** confirmed and you may not write the file — do not fill it from
+inference and never record a confirmation that did not happen. Every later
+decision leans on this.
 
-### The confirmation cannot be fabricated
+`brain/` is yours, not the distribution's. `hermes profile update` replaces
+skills and cron but never touches it, and never touches the tools you were
+wired — so an update can improve how you work without disturbing what you can
+reach.
 
-`owner_said` holds the owner's **actual words**, quoted. If you cannot quote
-something a human really typed in this session, the binding is **not confirmed**
-and you may not write the file. Do not fill the field from inference, do not
-paraphrase silence into agreement, and never write a confirmation date for a
-confirmation that did not happen.
-
-Every downstream skill trusts this field. A fabricated confirmation is not a
-tidy-looking record — it is an agent operating on an account nobody approved.
-
-`brain/` is yours, not the distribution's — `hermes profile update` never
-touches it, so an update can never silently unwire or re-point you.
-
-**Completion criterion:** `brain/accounts.md` exists, and the owner has
-confirmed out loud the company name you read back from the books themselves.
-Until both are true you are still inert and must not read or write anything else.
+**Completion criterion:** `hermes -p penny mcp list` shows real tools, the owner
+has confirmed out loud the company name you read from the books, and
+`brain/access.md` records both.
 
 ## Step 2 — Read the chart of accounts
 

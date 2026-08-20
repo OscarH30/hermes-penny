@@ -15,36 +15,26 @@ metadata:
 Find what is uncategorized, decide what you actually know, and be honest about
 the rest.
 
-## Resolve your accounts first
+## Check your tools before you start
 
-Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
-and substitute the `word_id` recorded there.
+You reach the books through whatever onboarding wired into this profile — an MCP
+server, or a documented API using a key in `.env`. Look at what you actually
+have.
 
-If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
-and run `onboarding`.** Never substitute a default and never guess.
+**No accounting tools on this profile → stop and run `onboarding`.** Do not fall
+back to a CLI you happen to find on the shell. A tool nobody granted you is a
+tool pointed at an account nobody chose, and with two companies connected that is
+how one company's expenses land in another's ledger.
 
-A binding without an `owner_said` quote is **not** a valid binding — treat it as
-absent. It means something wrote the file without a human confirming it. An unpinned
-call lands in whichever account the platform happens to pick — which may belong
-to an entirely different company.
-
-
-## Before anything: confirm whose books you are in
-
-Read the `quickbooks` binding from `brain/accounts.md` and pass `--account {{ACCOUNT:quickbooks}}` on
-**every** call in this skill. If it is missing or empty, **stop** and run
-`onboarding` — do not fall back to the default account. Owners commonly have a
-second company connected, and an unpinned call can land in the wrong ledger.
-Posting a client's expenses into your owner's books is the single worst mistake
-available to you, and it is silent when it happens.
+Tool names below are the common Composio slugs. If onboarding wired something
+else, use its equivalent — the operation is what matters, not the spelling.
 
 ## Step 1 — Find the work
 
 **QuickBooks.** Query transactions posted to the catch-all accounts:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" --account {{ACCOUNT:quickbooks}} \
-  -d '{"query":"SELECT * FROM Purchase WHERE TxnDate >= '\''2026-08-01'\'' MAXRESULTS 200"}'
+composio execute "QUICKBOOKS_QUERY_ENTITIES" -d '{"query":"SELECT * FROM Purchase WHERE TxnDate >= '\''2026-08-01'\'' MAXRESULTS 200"}'
 ```
 
 Then filter to lines whose `AccountBasedExpenseLineDetail.AccountRef` points at
@@ -118,7 +108,7 @@ reason is a guess wearing a suit.
 **QuickBooks.** Update the transaction's line to the correct `AccountRef`:
 
 ```bash
-composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" --account {{ACCOUNT:quickbooks}} -d '{...}'
+composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" -d '{...}'
 ```
 
 QuickBooks updates are **full-object updates** — read the current object, change

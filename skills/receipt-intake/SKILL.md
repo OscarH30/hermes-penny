@@ -16,25 +16,19 @@ Someone photographed a receipt on their phone. Turn it into a correct,
 documented entry — quickly, because they are probably still standing in the
 parking lot.
 
-## Resolve your accounts first
+## Check your tools before you start
 
-Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
-and substitute the `word_id` recorded there.
+You reach the books through whatever onboarding wired into this profile — an MCP
+server, or a documented API using a key in `.env`. Look at what you actually
+have.
 
-If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
-and run `onboarding`.** Never substitute a default and never guess.
+**No accounting tools on this profile → stop and run `onboarding`.** Do not fall
+back to a CLI you happen to find on the shell. A tool nobody granted you is a
+tool pointed at an account nobody chose, and with two companies connected that is
+how one company's expenses land in another's ledger.
 
-A binding without an `owner_said` quote is **not** a valid binding — treat it as
-absent. It means something wrote the file without a human confirming it. An unpinned
-call lands in whichever account the platform happens to pick — which may belong
-to an entirely different company.
-
-
-## Before anything: confirm whose books you are in
-
-Read the `quickbooks` binding from `brain/accounts.md` and pass `--account {{ACCOUNT:quickbooks}}` on
-every call. Missing or empty → stop and run `onboarding`. Never fall back to the
-default account; with two companies connected it can be the wrong one.
+Tool names below are the common Composio slugs. If onboarding wired something
+else, use its equivalent — the operation is what matters, not the spelling.
 
 ## Step 1 — Read it
 
@@ -62,8 +56,7 @@ book a receipt you cannot read.
 through the bank feed. Search for the same amount within a few days:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" --account {{ACCOUNT:quickbooks}} \
-  -d '{"query":"SELECT * FROM Purchase WHERE TotalAmt = '\''340.18'\'' AND TxnDate >= '\''2026-08-15'\''"}'
+composio execute "QUICKBOOKS_QUERY_ENTITIES" -d '{"query":"SELECT * FROM Purchase WHERE TotalAmt = '\''340.18'\'' AND TxnDate >= '\''2026-08-15'\''"}'
 ```
 
 - **Match found** → attach the receipt to it and correct the category if needed.
@@ -91,7 +84,7 @@ This is the part that makes the receipt worth keeping.
 
 **QuickBooks** — create an `Attachable` and link it to the transaction:
 ```bash
-composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" --account {{ACCOUNT:quickbooks}} -d '{...}'
+composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" -d '{...}'
 ```
 The `AttachableRef` must point at the transaction's type and ID. An attachment
 uploaded but not linked is invisible in the UI and effectively lost — verify the

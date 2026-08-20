@@ -1,5 +1,5 @@
 name: penny
-version: 1.1.2
+version: 1.2.0
 description: "Bookkeeper — learns your chart of accounts, categorizes uncategorized transactions in QuickBooks or Xero, books receipts from a photo, and asks about anything it isn't sure of. Nothing posts without your approval."
 hermes_requires: ">=0.20.0"
 author: "Vindex Consulting"
