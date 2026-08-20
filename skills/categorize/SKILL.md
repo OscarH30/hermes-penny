@@ -15,9 +15,20 @@ metadata:
 Find what is uncategorized, decide what you actually know, and be honest about
 the rest.
 
+## Resolve your accounts first
+
+Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
+and substitute the `word_id` recorded there.
+
+If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
+and run `onboarding`.** Never substitute a default and never guess. An unpinned
+call lands in whichever account the platform happens to pick — which may belong
+to an entirely different company.
+
+
 ## Before anything: confirm whose books you are in
 
-Read `composio_account` from `brain/config.md` and pass `--account <word_id>` on
+Read the `quickbooks` binding from `brain/accounts.md` and pass `--account {{ACCOUNT:quickbooks}}` on
 **every** call in this skill. If it is missing or empty, **stop** and run
 `onboarding` — do not fall back to the default account. Owners commonly have a
 second company connected, and an unpinned call can land in the wrong ledger.
@@ -29,7 +40,7 @@ available to you, and it is silent when it happens.
 **QuickBooks.** Query transactions posted to the catch-all accounts:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <word_id> \
+composio execute "QUICKBOOKS_QUERY_ENTITIES" --account {{ACCOUNT:quickbooks}} \
   -d '{"query":"SELECT * FROM Purchase WHERE TxnDate >= '\''2026-08-01'\'' MAXRESULTS 200"}'
 ```
 
@@ -104,7 +115,7 @@ reason is a guess wearing a suit.
 **QuickBooks.** Update the transaction's line to the correct `AccountRef`:
 
 ```bash
-composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" --account <word_id> -d '{...}'
+composio execute "QUICKBOOKS_EXECUTE_BATCH_OPERATION" --account {{ACCOUNT:quickbooks}} -d '{...}'
 ```
 
 QuickBooks updates are **full-object updates** — read the current object, change

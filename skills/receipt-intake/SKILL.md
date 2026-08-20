@@ -16,9 +16,20 @@ Someone photographed a receipt on their phone. Turn it into a correct,
 documented entry — quickly, because they are probably still standing in the
 parking lot.
 
+## Resolve your accounts first
+
+Every `{{ACCOUNT:<toolkit>}}` below is a placeholder. Read `brain/accounts.md`
+and substitute the `word_id` recorded there.
+
+If `brain/accounts.md` is missing, or the toolkit you need has no entry, **stop
+and run `onboarding`.** Never substitute a default and never guess. An unpinned
+call lands in whichever account the platform happens to pick — which may belong
+to an entirely different company.
+
+
 ## Before anything: confirm whose books you are in
 
-Read `composio_account` from `brain/config.md` and pass `--account <word_id>` on
+Read the `quickbooks` binding from `brain/accounts.md` and pass `--account {{ACCOUNT:quickbooks}}` on
 every call. Missing or empty → stop and run `onboarding`. Never fall back to the
 default account; with two companies connected it can be the wrong one.
 
@@ -48,7 +59,7 @@ book a receipt you cannot read.
 through the bank feed. Search for the same amount within a few days:
 
 ```bash
-composio execute "QUICKBOOKS_QUERY_ENTITIES" --account <word_id> \
+composio execute "QUICKBOOKS_QUERY_ENTITIES" --account {{ACCOUNT:quickbooks}} \
   -d '{"query":"SELECT * FROM Purchase WHERE TotalAmt = '\''340.18'\'' AND TxnDate >= '\''2026-08-15'\''"}'
 ```
 
@@ -77,7 +88,7 @@ This is the part that makes the receipt worth keeping.
 
 **QuickBooks** — create an `Attachable` and link it to the transaction:
 ```bash
-composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" --account <word_id> -d '{...}'
+composio execute "QUICKBOOKS_UPDATE_ATTACHABLE" --account {{ACCOUNT:quickbooks}} -d '{...}'
 ```
 The `AttachableRef` must point at the transaction's type and ID. An attachment
 uploaded but not linked is invisible in the UI and effectively lost — verify the
