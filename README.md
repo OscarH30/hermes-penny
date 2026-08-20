@@ -11,7 +11,7 @@ not drift out of it.
 ## Install
 
 ```bash
-hermes profile install git@github.com:<org>/hermes-penny.git --alias
+hermes profile install github.com/OscarH30/hermes-penny --alias
 ```
 
 **Then three one-time steps.** Do them in order — the first two are what make
