@@ -1,5 +1,5 @@
 name: penny
-version: 1.2.0
+version: 1.2.1
 description: "Bookkeeper — learns your chart of accounts, categorizes uncategorized transactions in QuickBooks or Xero, books receipts from a photo, and asks about anything it isn't sure of. Nothing posts without your approval."
 hermes_requires: ">=0.20.0"
 author: "Vindex Consulting"
@@ -7,8 +7,12 @@ license: "MIT"
 
 # What the distribution owns. Everything else in the profile — brain/, memories,
 # sessions, .env, auth.json, databases — belongs to the installer and is never
-# touched by `hermes profile update`. The account bindings onboarding writes live
-# in brain/accounts.md precisely so an update cannot unwire a configured agent.
+# touched by `hermes profile update`.
+#
+# Note what is deliberately ABSENT from this list: mcp.json and the mcp_servers
+# block in config.yaml. Those hold the tools onboarding wired to this profile,
+# and an update must never be able to unwire a configured agent. Skills, SOUL,
+# and cron improve; access stays exactly as the owner granted it.
 distribution_owned:
   - SOUL.md
   - config.yaml
@@ -20,12 +24,15 @@ distribution_owned:
   - distribution.yaml
 
 
-# Penny reaches your accounting system through Composio (recommended) or
-# direct API credentials. Everything below is optional — her onboarding skill
-# detects what you actually connected and configures around it.
+# NOTHING HERE IS REQUIRED TO INSTALL OR START.
+#
+# Penny arrives with no tool access at all. Her onboarding skill connects your
+# books and wires them to this profile — Composio (recommended), your own Intuit
+# or Xero credentials, or an MCP server you already run. These variables only
+# apply if you pick the direct-credential route.
 env_requires:
   - name: COMPOSIO_API_KEY
-    description: "Composio API key — the recommended path for QuickBooks and Xero. Free at composio.dev, then run `composio link quickbooks`."
+    description: "Composio API key — the recommended path for QuickBooks and Xero. Free at composio.dev. Onboarding walks you through it."
     required: false
     default: ""
   - name: QBO_CLIENT_ID

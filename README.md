@@ -14,56 +14,75 @@ not drift out of it.
 hermes profile install github.com/OscarH30/hermes-penny --alias
 ```
 
-**Then three one-time steps.** Do them in order — the first two are what make
-the agent able to think at all, and skipping them produces a confusing
+Already running Hermes? Paste the install prompt into the session you have open
+and it handles this for you. She installs as her **own profile**, alongside
+whatever you already run — nothing you have is modified.
+
+Then one thing before you talk to her: give the profile a model. Hermes profiles
+carry their own credentials and do **not** inherit yours, which is exactly why no
+API key ever ships inside a distribution. Skip this and you get a confusing
 "No inference provider configured" error.
 
 ```bash
-# 1. Authenticate this profile with a model provider.
-#    Each Hermes profile carries its own credentials — that is deliberate,
-#    and it is why no API key ever ships inside a distribution.
-hermes -p penny setup --portal
-
-# 2. Confirm the model. The package defaults to Nous Portal; if you are on
-#    Anthropic, OpenAI, or anything else, pick it here.
-hermes -p penny model
-
-# 3. Connect your books.
-cp ~/.hermes/profiles/penny/.env.EXAMPLE ~/.hermes/profiles/penny/.env
-composio link quickbooks        # or: composio link xero
+hermes -p penny setup --portal   # authenticate this profile
+hermes -p penny model            # confirm or change the model
 ```
 
-Then:
+Now onboard her:
 
 ```bash
 penny chat
 ```
 
-Say **"onboard me"** and she takes it from there.
+Say **"onboard me"**.
 
 > Requires Hermes >= 0.20.0 and git.
+
+---
+
+## She arrives with no access to anything
+
+This is the part worth understanding before you start.
+
+A freshly installed Penny can reach **nothing** — no QuickBooks, no Xero, no
+bank data. `hermes -p penny mcp list` comes back empty. That is not a broken
+install: Hermes scopes tools per profile, so whatever you already connected to
+your main agent is **not** connected to her.
+
+**Onboarding is where you hand over the keys**, one at a time, the way you would
+with a new hire. She will ask what you use, how you want to connect it, and then
+wire it to her profile — and she reads the company name back to you from the
+books themselves before she touches anything.
+
+Until that is done she cannot act on the wrong account, because she cannot act
+at all.
+
+---
+
+## What onboarding will connect
+
+| Need | Options she'll offer | Required? |
+|---|---|---|
+| Your books | Composio (recommended), your own Intuit/Xero API credentials, or an MCP server you already run | **Yes** |
+| Receipt photos | Telegram gateway, or a forwarding inbox | No |
+
+**New to Composio?** She'll walk you through signing up. It handles OAuth so
+nothing gets pasted anywhere and access is revocable from one dashboard. The
+direct-credential route works too — it means creating a developer app at Intuit
+or Xero, which is real work, and she'll say so rather than talking you into it.
+
+---
 
 ### Turn on her schedule
 
 Cron jobs ship with the package but are **not** started automatically — Hermes
-will not schedule someone else's jobs behind your back. Review and activate:
+will not schedule someone else's jobs behind your back. Once you are happy after
+onboarding:
 
 ```bash
 hermes -p penny cron list      # see what she would run
 hermes -p penny cron tick      # activate the schedule
 ```
-
----
-
-## What she needs connected
-
-| Need | Recommended | Alternative | Required? |
-|---|---|---|---|
-| Your books | `composio link quickbooks` or `xero` | `QBO_*` / `XERO_*` credentials | **Yes** |
-| Receipt photos | Telegram gateway | `PENNY_RECEIPT_EMAIL` forwarding | No |
-
-Composio is genuinely easier here. The direct route means creating a developer
-app at Intuit or Xero.
 
 ---
 
@@ -134,6 +153,7 @@ open them, edit them, argue with them.
 
 | File | What's in it |
 |---|---|
+| `access.md` | What you connected her to, and the words you confirmed it with |
 | `chart-of-accounts.md` | Every account with its ID, type, and description |
 | `rules.md` | What she's learned, with the evidence behind each rule |
 | `business.md` | What you do and how you want things treated |
@@ -167,8 +187,9 @@ rely on it.
 hermes profile update penny
 ```
 
-Your `brain/`, memories, sessions, `.env`, receipts, and ledger database are
-never touched.
+Your `brain/`, memories, sessions, `.env`, receipts, ledger database — **and the
+tools you connected her to** — are never touched. Updates change how she works,
+never what she can reach.
 
 ---
 
